@@ -1,6 +1,31 @@
 Apache Thrift
 =============
 
+Python 3.4+ asyncio support was added to "asyncio" branch.
+Unlike other efforts, this one implements the binary
+protocol, not the framed one (thus is faster).
+
+Example
+=======
+```python
+import asyncio
+from hbase.Hbase import Client
+from thrift.TAsyncio import TAsyncioTransport, TAsyncioBinaryProtocol
+
+
+def work(loop):
+    transport = yield from TAsyncioTransport.connect('hbase', 9090, loop)
+    client = Client(TAsyncioBinaryProtocol(transport))
+    tables = yield from client.getTableNames()
+    print(tables)
+
+loop = asyncio.get_event_loop()
+try:
+    loop.run_until_complete(work(loop))
+finally:
+    loop.close()
+```
+
 Last Modified: 2014-03-16
 
 License
